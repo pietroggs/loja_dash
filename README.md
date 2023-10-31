@@ -1,4 +1,5 @@
 eCommerce Admin Dashboard
+-typescript version
 
 Techs:
 - Shadcn/ui (view/components)
