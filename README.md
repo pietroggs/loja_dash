@@ -8,3 +8,4 @@ Techs:
 - Prisma (DAL)
 - PlanetScale (db)
 - react-hot-toast (pop-ups)
+- Cloudnary (????)
