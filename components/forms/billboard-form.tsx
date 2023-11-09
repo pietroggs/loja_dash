@@ -16,8 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { AlertModal } from '../modals/alert-modal';
-import { ApiAlert } from '../ui/api-alert';
-import { useOrigin } from '@/hooks/use-origin';
+import ImageUpload from '../ui/image-upload';
 
 const formSchema = z.object({
     label: z.string().min(3),
@@ -34,7 +33,6 @@ interface BillboardFormProps {
 export const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
     const params = useParams();
     const router = useRouter();
-    const origin = useOrigin();
 
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -55,9 +53,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => 
     const onSubmit = async (data: BillboardFormValue) => {
         try {
             console.log(data)
-            axios.patch(`/api/stores/${params.storeId}`, data)
+            if (initialData) {
+                axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`, data)
+            } else {
+                axios.post(`/api/${params.storeId}/billboards`, data)
+            }
             router.refresh()
-            toast.success('Loja Atualizada.')
+            router.push(`/${params.storeId}/billboards`)
+            toast.success(toastMessage)
         } catch (error) {
             toast.error("Algo de errado não está certo.")
         }
@@ -66,12 +69,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => 
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/stores/${params.storeId}`)
+            await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`)
             router.refresh()
-            router.push('/')
-            toast.success('Loja excluida.')
+            router.push(`/${params.storeId}/billboards/`)
+            toast.success('Billboard excluida.')
         } catch (error) {
-            toast.error("Para excluir uma loja você deve primeiro remover todos os produtos.")
+            toast.error("Para excluir uma bill você deve primeiro remover todas categorias.")
         } finally {
             setOpen(false)
             setLoading(false)
@@ -109,6 +112,24 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}
                     className='space-y-8 w-full'>
+                    <FormField
+                        control={form.control}
+                        name='imageUrl'
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Imagem de Fundo</FormLabel>
+                                <FormControl>
+                                    <ImageUpload
+                                        value={field.value ? [field.value] : []}
+                                        disabled={loading}
+                                        onChange={(url) => field.onChange(url)}
+                                        onRemove={() => field.onChange('')}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <div className="grid grid-cols-3 gap-8">
                         <FormField
                             control={form.control}

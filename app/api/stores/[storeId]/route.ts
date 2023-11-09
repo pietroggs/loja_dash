@@ -34,7 +34,7 @@ export async function PATCH(
         return NextResponse.json(store)
 
     } catch (e) {
-        console.log('[SOTRES_PATCH]', e)
+        console.log('[STORES_PATCH]', e)
         return new NextResponse("Internal error", { status: 500 })
     }
 }
@@ -66,7 +66,7 @@ export async function DELETE(
         return NextResponse.json(store)
 
     } catch (e) {
-        console.log('[SOTRES_PATCH]', e)
+        console.log('[STORES_DEL]', e)
         return new NextResponse("Internal error", { status: 500 })
     }
 }
