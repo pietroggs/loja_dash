@@ -7,29 +7,29 @@ export async function PATCH(
     req: Request,
     { params }: {
         params: {
-            storeId: string, billboardId: string
+            storeId: string, categoryId: string
         }
     }
 ) {
     try {
         const { userId } = auth()
         const body = await req.json()
-        const { label, imageUrl } = body
+        const { name, billboardId } = body
 
         if (!userId) {
             return new NextResponse("Unathent", { status: 401 })
         }
 
-        if (!label) {
-            return new NextResponse("label is required", { status: 400 })
+        if (!name) {
+            return new NextResponse("name is required", { status: 400 })
         }
 
-        if (!imageUrl) {
-            return new NextResponse("imageUrl is required", { status: 400 })
-        }
-
-        if (!params.billboardId) {
+        if (!billboardId) {
             return new NextResponse("billboardId is required", { status: 400 })
+        }
+
+        if (!params.categoryId) {
+            return new NextResponse("categoryId is required", { status: 400 })
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -43,19 +43,19 @@ export async function PATCH(
             return new NextResponse('Sem Autorização', { status: 403 })
         }
 
-        const billboard = await prismadb.billboards.updateMany({
+        const category = await prismadb.category.updateMany({
             where: {
-                id: params.billboardId
+                id: params.categoryId
             },
             data: {
-                label,
-                imageUrl
+                name,
+                billboardId
             }
         })
 
-        return NextResponse.json(billboard)
+        return NextResponse.json(category)
     } catch (e) {
-        console.log('[BILLBOARDS_PATCH]', error)
+        console.log('[CATEGORY_PATCH]', error)
         return new NextResponse("Internal error", { status: 500 })
     }
 }
@@ -65,7 +65,7 @@ export async function DELETE(
     req: Request,
     { params }: {
         params: {
-            storeId: string, billboardId: string
+            storeId: string, categoryId: string
         }
     }
 ) {
@@ -75,8 +75,8 @@ export async function DELETE(
         if (!userId)
             return new NextResponse("Unauthenticated", { status: 401 })
 
-        if (!params.billboardId)
-            return new NextResponse("billboardId is required", { status: 400 })
+        if (!params.categoryId)
+            return new NextResponse("categoryId is required", { status: 400 })
 
         const storeByUserId = await prismadb.store.findFirst({
             where: {
@@ -89,16 +89,16 @@ export async function DELETE(
             return new NextResponse('Sem Autorização', { status: 403 })
         }
 
-        const billboards = await prismadb.billboards.deleteMany({
+        const category = await prismadb.category.deleteMany({
             where: {
-                id: params.billboardId
+                id: params.categoryId
             }
         })
 
-        return NextResponse.json(billboards)
+        return NextResponse.json(category)
 
     } catch (e) {
-        console.log('[BILLBOARD_DELETE]', e)
+        console.log('[CATEGORY_DELETED]', e)
         return new NextResponse("Internal error", { status: 500 })
     }
 }
@@ -108,24 +108,24 @@ export async function GET(
     req: Request,
     { params }: {
         params: {
-            billboardId: string
+            categoryId: string
         }
     }
 ) {
     try {
-        if (!params.billboardId)
-            return new NextResponse("billboardId is required", { status: 400 })
+        if (!params.categoryId)
+            return new NextResponse("categoryId is required", { status: 400 })
 
-        const billboards = await prismadb.billboards.findUnique({
+        const category = await prismadb.category.findUnique({
             where: {
-                id: params.billboardId
+                id: params.categoryId
             }
         })
 
-        return NextResponse.json(billboards)
+        return NextResponse.json(category)
 
     } catch (e) {
-        console.log('[BILLBOARD_GET]', e)
+        console.log('[CATEGORY_GET]', e)
         return new NextResponse("Internal error", { status: 500 })
     }
 }

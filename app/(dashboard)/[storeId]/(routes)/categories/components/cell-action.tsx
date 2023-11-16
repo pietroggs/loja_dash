@@ -6,13 +6,13 @@ import toast from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 
-import { BillboadColumn } from "./columns";
+import { CategoryColumn } from "./columns";
 import { Button } from "@/components/ui/button";
 import { AlertModal } from "@/components/modals/alert-modal";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface CellActionProps {
-    data: BillboadColumn
+    data: CategoryColumn
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -24,17 +24,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
     const onCopy = (id: string) => {
         navigator.clipboard.writeText(id)
-        toast.success("Billboard id copied")
+        toast.success("Category id copied")
     }
 
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/${params.storeId}/billboards/${data.id}`)
+            await axios.delete(`/api/${params.storeId}/categories/${data.id}`)
             router.refresh()
-            toast.success('Billboard excluida.')
+            toast.success('Categoria excluida.')
         } catch (error) {
-            toast.error("Para excluir uma bill você deve primeiro remover todas categorias.")
+            toast.error("Para excluir uma categoria você deve remover os produtos associados.")
         } finally {
             setOpen(false)
             setLoading(false)
@@ -51,7 +51,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant={'ghost'} className="h-8 w-8">
+                    <Button variant={"ghost"} className="h-8 w-8">
                         <span><MoreHorizontal className="h-5 w-5" /></span>
                     </Button>
                 </DropdownMenuTrigger>
@@ -59,7 +59,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                     <DropdownMenuLabel>
                         Actions
                     </DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/billboards/${data.id}`)}>
+                    <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/categories/${data.id}`)}>
                         <Edit className="mr-2 h-4 w-4" />
                         Atualizar
                     </DropdownMenuItem>
